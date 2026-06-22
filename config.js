@@ -10,16 +10,16 @@ var COLUMNS = {
   END:          3,
   NAME:         4,
   STATUS:       5,
-  REQUEST:      6,
-  TEACHER_INFO: 7
+  CONSULTATION: 6,
+  REQUEST:      7,
+  TEACHER_INFO: 8
 };
 
 var COLORS = {
-  ACTIVE:           "#00ff00",
-  DONE_SIGNAL:      "#999999",
-  HEADER_TITLE:     "#cccccc",
-  FOURTH_PERIOD_BG: "#cccccc",
-  HEADER_ROW:       "#d9d9d9"
+  ACTIVE:       "#00ff00",
+  DONE_SIGNAL:  "#999999",
+  HEADER_TITLE: "#cccccc",
+  HEADER_ROW:   "#d9d9d9"
 };
 
 var FONTS = {
@@ -29,30 +29,50 @@ var FONTS = {
 
 var STATUSES = {
   DONE:          "済(Done)",
-  NOT_AVAILABLE: "対応不可"
+  NOT_AVAILABLE: "対応不可",
+  BREAK:         "休憩",
+  TEACHER:       "先生からの共有"
 };
 
-// 時限スロット定義（setupSheet.js / markSlots.js で共有）
-var THIRD_PERIOD = [
-  ["13:10", "13:35"], ["13:35", "14:00"], ["14:00", "14:25"], ["14:25", "14:50"]
+// スケジュール定義（type: "teacher" | "presentation" | "break"）
+var SCHEDULE = [
+  { start: "13:10", end: "13:30", type: "teacher",      period: "3rd" },
+  { start: "13:30", end: "13:50", type: "presentation" },
+  { start: "13:50", end: "14:00", type: "break" },
+  { start: "14:00", end: "14:20", type: "presentation" },
+  { start: "14:20", end: "14:30", type: "break" },
+  { start: "14:30", end: "14:50", type: "presentation" },
+  { start: "14:50", end: "15:00", type: "break" },
+  { start: "15:00", end: "15:20", type: "presentation", period: "4th" },
+  { start: "15:20", end: "15:30", type: "break" },
+  { start: "15:30", end: "15:50", type: "presentation" },
+  { start: "15:50", end: "16:00", type: "break" },
+  { start: "16:00", end: "16:20", type: "presentation" },
+  { start: "16:20", end: "16:30", type: "break" },
+  { start: "16:30", end: "16:50", type: "teacher" },
+  { start: "16:50", end: "17:00", type: "presentation", period: "5th" },
+  { start: "17:00", end: "17:10", type: "break" },
+  { start: "17:10", end: "17:30", type: "presentation" },
+  { start: "17:30", end: "17:40", type: "break" },
+  { start: "17:40", end: "18:00", type: "presentation" },
+  { start: "18:00", end: "18:10", type: "break" },
+  { start: "18:10", end: "18:30", type: "presentation" },
+  { start: "18:30", end: "18:40", type: "break" },
+  { start: "18:40", end: "19:00", type: "presentation", period: "6th" },
+  { start: "19:00", end: "19:10", type: "break" },
+  { start: "19:10", end: "19:30", type: "presentation" },
+  { start: "19:30", end: "19:40", type: "break" },
+  { start: "19:40", end: "20:00", type: "presentation" },
+  { start: "20:00", end: "20:10", type: "break" },
+  { start: "20:10", end: "20:30", type: "presentation" }
 ];
 
-var FOURTH_PERIOD = [
-  ["15:00", "15:25"], ["15:25", "15:50"], ["15:50", "16:15"], ["16:15", "16:40"]
-];
-
-var FIFTH_PERIOD = [
-  ["16:50", "17:15"], ["17:15", "17:40"], ["17:40", "18:05"], ["18:05", "18:30"]
-];
-
-// 行番号定義（時限スロット定義の後に配置する必要あり）
+// 行番号定義（SCHEDULE 定義の後に配置する必要あり）
 var ROWS = {
-  DATA_START:          3,
-  FOURTH_PERIOD_START: 3 + THIRD_PERIOD.length,
-  FOURTH_PERIOD_END:   3 + THIRD_PERIOD.length + FOURTH_PERIOD.length - 1,
-  LAST_DATA_ROW:       3 + THIRD_PERIOD.length + FOURTH_PERIOD.length + FIFTH_PERIOD.length - 1,
-  COUNTER_DATA_START:  3,  // row1: タイトル, row2: ヘッダー, row3〜: データ
-  COUNTER_SORT_START:  3
+  DATA_START:         3,
+  LAST_DATA_ROW:      3 + SCHEDULE.length - 1,
+  COUNTER_DATA_START: 3,
+  COUNTER_SORT_START: 3
 };
 
 // counterシートの列番号定義

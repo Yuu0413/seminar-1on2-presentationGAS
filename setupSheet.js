@@ -1,5 +1,5 @@
 // シートのレイアウト・初期データを設定する
-// 時限スロット定義は config.js の THIRD_PERIOD / FOURTH_PERIOD / FIFTH_PERIOD を参照
+// スケジュール定義は config.js の SCHEDULE を参照
 
 function setupSheet(sheet) {
   sheet.getRange("1:1").breakApart();
@@ -11,43 +11,52 @@ function setupSheet(sheet) {
   sheet.getRange("A1").setFontSize(FONTS.TITLE_SIZE);
   sheet.getRange("A1").setFontWeight("bold");
 
-  sheet.getRange("A2:G2").setValues([[
+  sheet.getRange("A2:H" + ROWS.LAST_DATA_ROW).breakApart();
+  sheet.getRange("A2:H2").setValues([[
     "時限(Period)", "開始時間(Start)", "終了時間(End)",
     "予約者名(Student name)", "状態(situation)",
-    "要望(Request)", "先生からの連絡(teacher's info)"
+    "相談内容(Consultation content)", "要望(Request)",
+    "先生からの連絡(teacher's info)"
   ]]);
-  sheet.getRange(2, 7, ROWS.LAST_DATA_ROW - 1, 2).mergeAcross();
   sheet.getRange("A2:H2").setBackground(COLORS.HEADER_ROW);
   sheet.getRange("A2:H2").setFontSize(FONTS.BODY_SIZE);
+  sheet.setColumnWidth(1, 125);
+  sheet.setColumnWidths(2, 4, 130);
+  sheet.setColumnWidth(6, 215);
+  sheet.setColumnWidth(7, 130);
+  sheet.setColumnWidth(8, 225);
 
-  sheet.getRange(ROWS.DATA_START, COLUMNS.PERIOD).setValue("3rd");
-  THIRD_PERIOD.forEach(function(slot, i) {
+  SCHEDULE.forEach(function(slot, i) {
     var row = ROWS.DATA_START + i;
-    sheet.getRange(row, COLUMNS.START).setValue(slot[0]);
-    sheet.getRange(row, COLUMNS.END).setValue(slot[1]);
+    sheet.getRange(row, 1, 1, 8).setBackground(null);
+    sheet.getRange(row, COLUMNS.PERIOD).setValue(slot.period || "");
+    sheet.getRange(row, COLUMNS.START).setValue(slot.start);
+    sheet.getRange(row, COLUMNS.END).setValue(slot.end || "");
+
+    if (slot.type === "presentation") {
+      sheet.getRange(row, COLUMNS.NAME).setValue("");
+    } else {
+      var label = slot.type === "teacher" ? STATUSES.TEACHER : STATUSES.BREAK;
+      sheet.getRange(row, COLUMNS.NAME).setValue(label);
+    }
+    sheet.getRange(row, COLUMNS.STATUS).setValue("");
   });
 
-  var fourthLabelRow = ROWS.FOURTH_PERIOD_START;
-  sheet.getRange(fourthLabelRow, COLUMNS.PERIOD).setValue("4th");
-  FOURTH_PERIOD.forEach(function(slot, i) {
-    var row = fourthLabelRow + i;
-    sheet.getRange(row, COLUMNS.START).setValue(slot[0]);
-    sheet.getRange(row, COLUMNS.END).setValue(slot[1]);
-  });
-
-  var fifthLabelRow = ROWS.FOURTH_PERIOD_END + 1;
-  sheet.getRange(fifthLabelRow, COLUMNS.PERIOD).setValue("5th");
-  FIFTH_PERIOD.forEach(function(slot, i) {
-    var row = fifthLabelRow + i;
-    sheet.getRange(row, COLUMNS.START).setValue(slot[0]);
-    sheet.getRange(row, COLUMNS.END).setValue(slot[1]);
-  });
-
-  sheet.getRange("A2:G" + ROWS.LAST_DATA_ROW).setFontSize(FONTS.BODY_SIZE);
+  sheet.getRange("A2:H" + ROWS.LAST_DATA_ROW).setFontSize(FONTS.BODY_SIZE);
 }
 
-// GASエディタから直接テスト実行するためのラッパー
+// GASエディタから直接テスト実行するためのラッパー（アクティブシートに上書き）
 function setupSheetTest() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  setupSheet(sheet);
+}
+
+// テスト用シートを1枚新規作成する（既存の「テスト」シートは削除して再作成）
+function createTestSheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var testSheetName = "テスト";
+  var existing = ss.getSheetByName(testSheetName);
+  if (existing) ss.deleteSheet(existing);
+  var sheet = ss.insertSheet(testSheetName, 0);
   setupSheet(sheet);
 }

@@ -13,7 +13,9 @@ function onOpen() {
     .addSeparator()
     .addSubMenu(ui.createMenu("シート管理")
       .addItem("予約なし未来シートを再生成",           "rebuildEmptyFutureSheets")
-      .addItem("全未来シートを再生成（予約含む）",      "rebuildAllFutureSheets"  ))
+      .addItem("全未来シートを再生成（予約含む）",      "rebuildAllFutureSheets"  )
+      .addSeparator()
+      .addItem("テストシートを作成",                   "createTestSheet"         ))
     .addToUi();
 }
 
