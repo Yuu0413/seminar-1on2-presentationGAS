@@ -13,6 +13,7 @@ function markActiveSlots() {
   var backgrounds = sheet.getRange(ROWS.DATA_START, COLUMNS.NAME, numRows, 1).getBackgrounds();
 
   for (var i = 0; i < numRows; i++) {
+    if (!SCHEDULE[i] || SCHEDULE[i].type !== "presentation") continue;
     var row = ROWS.DATA_START + i;
     if (names[i][0]) {
       backgrounds[i][0] = COLORS.ACTIVE;
@@ -39,6 +40,7 @@ function checkAndMarkDone() {
   var backgrounds = sheet.getRange(ROWS.DATA_START, COLUMNS.NAME,  numRows, 1).getBackgrounds();
 
   for (var i = 0; i < numRows; i++) {
+    if (!SCHEDULE[i] || SCHEDULE[i].type !== "presentation") continue;
     var row = ROWS.DATA_START + i;
 
     var start  = data[i][0];

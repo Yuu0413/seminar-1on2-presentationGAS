@@ -40,7 +40,9 @@ function hasBooking_(sheet) {
   var lastRow = sheet.getLastRow();
   if (lastRow < ROWS.DATA_START) return false;
   var names = sheet.getRange(ROWS.DATA_START, COLUMNS.NAME, lastRow - ROWS.DATA_START + 1, 1).getValues();
-  return names.some(function(row) { return row[0] !== ""; });
+  return names.some(function(row, i) {
+    return SCHEDULE[i] && SCHEDULE[i].type === "presentation" && row[0] !== "";
+  });
 }
 
 // トリガーから呼ばれるメイン関数
