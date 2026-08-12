@@ -14,7 +14,7 @@ function setupSheet(sheet) {
   sheet.getRange("A2:H" + ROWS.LAST_DATA_ROW).breakApart();
   sheet.getRange("A2:H2").setValues([[
     "時限(Period)", "開始時間(Start)", "終了時間(End)",
-    "予約者名(Student name)", "状態(situation)",
+    "予約者名(Student name)", "状態(situation) ※空欄でお願いします！",
     "相談内容(Consultation content)", "要望(Request)",
     "先生からの連絡(teacher's info)"
   ]]);
@@ -55,8 +55,7 @@ function setupSheetTest() {
 // 位置はcounterシートの直後に固定する
 function createTestSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var testSheetName = "テスト";
-  var existing = ss.getSheetByName(testSheetName);
+  var existing = ss.getSheetByName(SHEET_NAMES.TEST);
   if (existing) ss.deleteSheet(existing);
 
   var counterSheet = ss.getSheetByName(SHEET_NAMES.COUNTER);
