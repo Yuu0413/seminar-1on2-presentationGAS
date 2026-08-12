@@ -40,8 +40,12 @@ function checkAndMarkDone() {
   checkAndMarkDoneOnSheet_(sheet);
 }
 
-// 指定したシートに対して、発表済の人のE列に済をマークしカウントを加算する（GAS API依存部分）
-function checkAndMarkDoneOnSheet_(sheet) {
+// 指定したシートに対して、発表済の人のE列に済をマークする（GAS API依存部分）
+// incrementCount: false の場合、counterシートへのカウント加算は行わない
+// （「テスト」シートでの動作確認が、本物のcounterシートを書き換えてしまうのを防ぐため）
+function checkAndMarkDoneOnSheet_(sheet, options) {
+  var incrementCount = !options || options.incrementCount !== false;
+
   var now = new Date();
   var lastRow = sheet.getLastRow();
   if (lastRow < ROWS.DATA_START) return;
@@ -61,7 +65,7 @@ function checkAndMarkDoneOnSheet_(sheet) {
   updates.forEach(function(update) {
     var row = ROWS.DATA_START + update.index;
     sheet.getRange(row, COLUMNS.STATUS).setValue(STATUSES.DONE);
-    addCount(ss, update.name);
+    if (incrementCount) addCount(ss, update.name);
   });
 }
 
@@ -113,10 +117,11 @@ function markActiveSlotsOnTestSheet() {
 }
 
 // メニュー「発表済の人のE列セルに済をマーク」：「テスト」シートに対して checkAndMarkDone と同じ処理を行う
+// counterシートへのカウント加算は行わない（テストデータで本物の発表回数が増えるのを防ぐため）
 function checkAndMarkDoneOnTestSheet() {
   var sheet = getTestSheet_();
   if (!sheet) return;
-  checkAndMarkDoneOnSheet_(sheet);
+  checkAndMarkDoneOnSheet_(sheet, { incrementCount: false });
 }
 
 // Node.js（テスト実行時）のみ module.exports を定義する。GAS環境には module が無いため無視される。
