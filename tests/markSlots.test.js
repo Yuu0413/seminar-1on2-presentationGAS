@@ -9,9 +9,9 @@ const NONE = "#ffffff";
 const DONE_STATUS = "済(Done)";
 const NOT_AVAILABLE_STATUS = "対応不可";
 
-// parseTime は内部で「今日の日付」+ 指定した時刻 を組み立てるため、
-// テスト側の now も同じ「今日の日付」を基準にしないと比較がずれる
-function todayAt(hour, minute) {
+// 読みやすさのため、指定した時刻のDateを作る（日付部分は何でもよい）。
+// now と endTime の比較は isPastTimeOfDay_() が時:分だけで行うため、日付を揃える必要はない
+function timeAt(hour, minute) {
   var d = new Date();
   d.setHours(hour, minute, 0, 0);
   return d;
@@ -71,7 +71,7 @@ test("発表行・名前あり・灰色・終了時刻を過ぎている場合�
   const schedule = [{ type: "presentation" }];
   const data = [["13:10", "13:30", "Tanaka(B2)", ""]];
   const backgrounds = [[DONE_SIGNAL]];
-  const now = todayAt(14, 0);
+  const now = timeAt(14, 0);
   const result = computeDoneUpdates_(schedule, data, backgrounds, now, DONE_SIGNAL, DONE_STATUS, NOT_AVAILABLE_STATUS);
   assert.deepEqual(result, [{ index: 0, name: "Tanaka(B2)" }]);
 });
@@ -80,7 +80,7 @@ test("時間が過ぎていても緑色のままなら対象にしない", () =>
   const schedule = [{ type: "presentation" }];
   const data = [["13:10", "13:30", "Tanaka(B2)", ""]];
   const backgrounds = [[ACTIVE]];
-  const now = todayAt(14, 0);
+  const now = timeAt(14, 0);
   const result = computeDoneUpdates_(schedule, data, backgrounds, now, DONE_SIGNAL, DONE_STATUS, NOT_AVAILABLE_STATUS);
   assert.deepEqual(result, []);
 });
@@ -89,7 +89,7 @@ test("時間が過ぎておらず緑色のままなら対象にしない", () =>
   const schedule = [{ type: "presentation" }];
   const data = [["13:10", "13:30", "Tanaka(B2)", ""]];
   const backgrounds = [[ACTIVE]];
-  const now = todayAt(13, 15);
+  const now = timeAt(13, 15);
   const result = computeDoneUpdates_(schedule, data, backgrounds, now, DONE_SIGNAL, DONE_STATUS, NOT_AVAILABLE_STATUS);
   assert.deepEqual(result, []);
 });
@@ -110,7 +110,7 @@ test("灰色になっていても、まだ終了時刻を過ぎていなけれ�
   const schedule = [{ type: "presentation" }];
   const data = [["13:10", "13:30", "Tanaka(B2)", ""]];
   const backgrounds = [[DONE_SIGNAL]];
-  const now = todayAt(13, 15);
+  const now = timeAt(13, 15);
   const result = computeDoneUpdates_(schedule, data, backgrounds, now, DONE_SIGNAL, DONE_STATUS, NOT_AVAILABLE_STATUS);
   assert.deepEqual(result, []);
 });
@@ -119,7 +119,7 @@ test("時間が過ぎていても名前欄が空欄なら対象にしない", ()
   const schedule = [{ type: "presentation" }];
   const data = [["13:10", "13:30", "", ""]];
   const backgrounds = [[DONE_SIGNAL]];
-  const now = todayAt(14, 0);
+  const now = timeAt(14, 0);
   const result = computeDoneUpdates_(schedule, data, backgrounds, now, DONE_SIGNAL, DONE_STATUS, NOT_AVAILABLE_STATUS);
   assert.deepEqual(result, []);
 });
@@ -128,7 +128,7 @@ test("休憩行は灰色かつ時間を過ぎていても対象外（発表行�
   const schedule = [{ type: "break" }];
   const data = [["13:50", "14:00", "休憩", ""]];
   const backgrounds = [[DONE_SIGNAL]];
-  const now = todayAt(14, 30);
+  const now = timeAt(14, 30);
   const result = computeDoneUpdates_(schedule, data, backgrounds, now, DONE_SIGNAL, DONE_STATUS, NOT_AVAILABLE_STATUS);
   assert.deepEqual(result, []);
 });
@@ -137,7 +137,7 @@ test("すでに済(Done)になっている行は、重複してカウント対�
   const schedule = [{ type: "presentation" }];
   const data = [["13:10", "13:30", "Tanaka(B2)", DONE_STATUS]];
   const backgrounds = [[DONE_SIGNAL]];
-  const now = todayAt(14, 0);
+  const now = timeAt(14, 0);
   const result = computeDoneUpdates_(schedule, data, backgrounds, now, DONE_SIGNAL, DONE_STATUS, NOT_AVAILABLE_STATUS);
   assert.deepEqual(result, []);
 });
@@ -146,7 +146,7 @@ test("対応不可になっている行は対象にしない", () => {
   const schedule = [{ type: "presentation" }];
   const data = [["13:10", "13:30", "Tanaka(B2)", NOT_AVAILABLE_STATUS]];
   const backgrounds = [[DONE_SIGNAL]];
-  const now = todayAt(14, 0);
+  const now = timeAt(14, 0);
   const result = computeDoneUpdates_(schedule, data, backgrounds, now, DONE_SIGNAL, DONE_STATUS, NOT_AVAILABLE_STATUS);
   assert.deepEqual(result, []);
 });
@@ -155,7 +155,7 @@ test("START/ENDが空欄（休憩枠など）でもエラーにならず対象�
   const schedule = [{ type: "presentation" }];
   const data = [["", "", "", ""]];
   const backgrounds = [[DONE_SIGNAL]];
-  const now = todayAt(14, 0);
+  const now = timeAt(14, 0);
   const result = computeDoneUpdates_(schedule, data, backgrounds, now, DONE_SIGNAL, DONE_STATUS, NOT_AVAILABLE_STATUS);
   assert.deepEqual(result, []);
 });
