@@ -78,11 +78,16 @@ function sortDateSheets() {
 
 // 日付シートだけを日付昇順に並び替える（counterシート等の位置は変えない）
 function sortDateSheets_(ss) {
-  var currentNames = ss.getSheets().map(function(sheet) { return sheet.getName(); });
+  var sheets = ss.getSheets();
+  var currentNames = sheets.map(function(sheet) { return sheet.getName(); });
   var targetNames = computeSortedSheetOrder_(currentNames);
 
+  var nameToSheet = {};
+  sheets.forEach(function(sheet) { nameToSheet[sheet.getName()] = sheet; });
+
   targetNames.forEach(function(name, i) {
-    var sheet = ss.getSheetByName(name);
+    if (currentNames[i] === name) return; // 既に正しい位置なら何もしない
+    var sheet = nameToSheet[name];
     sheet.activate();
     ss.moveActiveSheet(i + 1);
   });
