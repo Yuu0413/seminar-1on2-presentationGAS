@@ -1,7 +1,7 @@
 // computeSortedSheetOrder_ の純粋ロジックだけをテストする（GAS APIには依存しない）
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { computeSortedSheetOrder_ } = require("./manageSheets.js");
+const { computeSortedSheetOrder_ } = require("../manageSheets.js");
 
 test("日付シートだけの配列は昇順に並び替わる", () => {
   const input = ["2026-08-28", "2026-08-14", "2026-08-21"];
