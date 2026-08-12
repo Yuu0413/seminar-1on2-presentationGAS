@@ -1,8 +1,8 @@
 // スプレッドシートを開いたときにメニューを追加する
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
-  ui.createMenu("1on2管理")
-    .addSubMenu(ui.createMenu("counterソート")
+  ui.createMenu("シート管理")
+    .addSubMenu(ui.createMenu("発表回数")
       .addItem("名前順でソート",                       "sortCounterByName"      )
       .addItem("学年順でソート（昇順: B1→M2）",        "sortCounterByGradeAsc"  )
       .addItem("学年順でソート（降順: M2→B1）",        "sortCounterByGradeDesc" )
@@ -11,15 +11,15 @@ function onOpen() {
       .addItem("学籍番号順でソート",                   "sortCounterByStudentId" )
       .addItem("counterシートのヘッダーを設定",        "setupCounterSheet"      ))
     .addSeparator()
-    .addSubMenu(ui.createMenu("シート管理")
+    .addSubMenu(ui.createMenu("シート全般")
       .addItem("予約なし未来シートを再生成",           "rebuildEmptyFutureSheets")
       .addItem("全未来シートを再生成（予約含む）",      "rebuildAllFutureSheets"  )
-      .addItem("シートをソート",                       "sortDateSheets"          )
+      .addItem("シートをソート",                       "sortDateSheets"          ))
       .addSeparator()
-      .addItem("テストシートを作成",                   "createTestSheet"         ))
-    .addSubMenu(ui.createMenu("テストシートでのテスト")
+    .addSubMenu(ui.createMenu("テスト")
       .addItem("発表者セルの背景を緑にする",           "markActiveSlotsOnTestSheet"  )
-      .addItem("発表済の人のE列セルに済をマーク",       "checkAndMarkDoneOnTestSheet" ))
+      .addItem("発表済の人のE列セルに済をマーク",       "checkAndMarkDoneOnTestSheet" )
+      .addItem("テストシートを作成",                   "createTestSheet"         ))
     .addToUi();
 }
 
