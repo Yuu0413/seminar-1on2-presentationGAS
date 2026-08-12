@@ -69,6 +69,15 @@ function checkAndMarkDoneOnSheet_(sheet, options) {
   });
 }
 
+// nowの時刻がendTimeの時刻を過ぎているかを、「日付」を無視して時:分だけで比較する
+// （parseTime()はendTimeの日付部分に「実行時点の今日」を使うため、日付部分まで
+// 比較すると、テストの基準時刻や実行タイミングによって不安定になる）
+function isPastTimeOfDay_(now, endTime) {
+  var nowMinutes = now.getHours() * 60 + now.getMinutes();
+  var endMinutes = endTime.getHours() * 60 + endTime.getMinutes();
+  return nowMinutes >= endMinutes;
+}
+
 // 発表行のうち「名前あり・灰色(done signal)・終了時刻を過ぎている・まだ済/対応不可でない」行を
 // 済にすべき対象として返す（GAS APIに依存しない純粋関数）
 function computeDoneUpdates_(schedule, data, backgrounds, now, doneSignalColor, doneStatus, notAvailableStatus) {
@@ -82,7 +91,7 @@ function computeDoneUpdates_(schedule, data, backgrounds, now, doneSignalColor, 
     if (!start || !end) continue;
 
     var endTime = parseTime(end);
-    if (!endTime || now < endTime) continue;
+    if (!endTime || !isPastTimeOfDay_(now, endTime)) continue;
 
     var name    = data[i][2];
     var status  = data[i][3];

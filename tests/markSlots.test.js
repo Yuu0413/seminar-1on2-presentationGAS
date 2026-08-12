@@ -94,6 +94,18 @@ test("時間が過ぎておらず緑色のままなら対象にしない", () =>
   assert.deepEqual(result, []);
 });
 
+test("nowとendTimeの「日付」がずれていても、時刻だけを見て終了時刻を過ぎているか判定する", () => {
+  // parseTime()は内部で「実行時点の実際の今日」を使ってendTimeを組み立てるため、
+  // テストのnowが違う年月日を指していると、時刻としては過ぎていても日付比較で
+  // 「まだ過ぎていない」と誤判定されないことを確認する
+  const schedule = [{ type: "presentation" }];
+  const data = [["13:10", "13:30", "Tanaka(B2)", ""]];
+  const backgrounds = [[DONE_SIGNAL]];
+  const now = new Date(2020, 0, 1, 14, 0); // 日付は2020年だが、時刻は14:00（13:30より後）
+  const result = computeDoneUpdates_(schedule, data, backgrounds, now, DONE_SIGNAL, DONE_STATUS, NOT_AVAILABLE_STATUS);
+  assert.deepEqual(result, [{ index: 0, name: "Tanaka(B2)" }]);
+});
+
 test("灰色になっていても、まだ終了時刻を過ぎていなければ対象にしない（時刻を過ぎたら次回に回る）", () => {
   const schedule = [{ type: "presentation" }];
   const data = [["13:10", "13:30", "Tanaka(B2)", ""]];
