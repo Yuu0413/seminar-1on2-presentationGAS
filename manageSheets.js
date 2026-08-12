@@ -67,6 +67,25 @@ function createFourWeekSheets(ss) {
     setupSheet(sheet);
     counterIndex++;
   }
+
+  sortDateSheets_(ss);
+}
+
+// メニューから呼ばれる：日付シートを日付昇順に並び替える
+function sortDateSheets() {
+  sortDateSheets_(SpreadsheetApp.getActiveSpreadsheet());
+}
+
+// 日付シートだけを日付昇順に並び替える（counterシート等の位置は変えない）
+function sortDateSheets_(ss) {
+  var currentNames = ss.getSheets().map(function(sheet) { return sheet.getName(); });
+  var targetNames = computeSortedSheetOrder_(currentNames);
+
+  targetNames.forEach(function(name, i) {
+    var sheet = ss.getSheetByName(name);
+    sheet.activate();
+    ss.moveActiveSheet(i + 1);
+  });
 }
 
 function archiveOldSheets(ss) {
@@ -103,4 +122,35 @@ function isDateSheetName_(name) {
 function parseDateSheetName_(name) {
   var parts = name.split("-");
   return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+}
+
+// 日付シート名だけを日付昇順に並び替えた新しい配列を返す（非日付シートの位置は変えない）
+// 日付シートが非日付シート（counterなど）で分断されている場合、区間ごとに独立してソートする
+// （例：counterより前の「今週から4週間」ブロックと、counterより後ろの「過去のアーカイブ」ブロックを
+// 　まとめて1本でソートすると、過去と未来が逆転して混ざってしまうため）
+// GAS APIに依存しない純粋関数（Node.jsでテスト可能）
+function computeSortedSheetOrder_(sheetNames) {
+  var result = sheetNames.slice();
+  var i = 0;
+  while (i < result.length) {
+    if (!isDateSheetName_(result[i])) {
+      i++;
+      continue;
+    }
+    var j = i;
+    while (j < result.length && isDateSheetName_(result[j])) j++;
+
+    // "YYYY-MM-DD" は文字列の辞書順ソートがそのまま日付の昇順になる
+    var run = result.slice(i, j).sort();
+    for (var k = 0; k < run.length; k++) {
+      result[i + k] = run[k];
+    }
+    i = j;
+  }
+  return result;
+}
+
+// Node.js（テスト実行時）のみ module.exports を定義する。GAS環境には module が無いため無視される。
+if (typeof module !== "undefined") {
+  module.exports = { computeSortedSheetOrder_ };
 }
