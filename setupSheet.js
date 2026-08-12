@@ -54,9 +54,8 @@ function setupSheetTest() {
 // テスト用シートを1枚新規作成する（既存の「テスト」シートは削除して再作成）
 function createTestSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var testSheetName = "テスト";
-  var existing = ss.getSheetByName(testSheetName);
+  var existing = ss.getSheetByName(SHEET_NAMES.TEST);
   if (existing) ss.deleteSheet(existing);
-  var sheet = ss.insertSheet(testSheetName, 0);
+  var sheet = ss.insertSheet(SHEET_NAMES.TEST, 0);
   setupSheet(sheet);
 }

@@ -17,6 +17,9 @@ function onOpen() {
       .addItem("シートをソート",                       "sortDateSheets"          )
       .addSeparator()
       .addItem("テストシートを作成",                   "createTestSheet"         ))
+    .addSubMenu(ui.createMenu("テストシートでのテスト")
+      .addItem("発表者セルの背景を緑にする",           "markActiveSlotsOnTestSheet"  )
+      .addItem("発表済の人のE列セルに済をマーク",       "checkAndMarkDoneOnTestSheet" ))
     .addToUi();
 }
 

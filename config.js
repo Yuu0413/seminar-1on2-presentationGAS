@@ -1,7 +1,8 @@
 // 設定値・定数
 
 var SHEET_NAMES = {
-  COUNTER: "counter"
+  COUNTER: "counter",
+  TEST:    "テスト"
 };
 
 var COLUMNS = {

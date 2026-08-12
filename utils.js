@@ -31,3 +31,8 @@ function parseTime(timeVal) {
   result.setHours(h, m, 0, 0);
   return result;
 }
+
+// Node.js（テスト実行時）のみ module.exports を定義する。GAS環境には module が無いため無視される。
+if (typeof module !== "undefined") {
+  module.exports = { getFriday, formatDate, parseTime };
+}
