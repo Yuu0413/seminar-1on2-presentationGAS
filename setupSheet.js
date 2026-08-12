@@ -52,10 +52,14 @@ function setupSheetTest() {
 }
 
 // テスト用シートを1枚新規作成する（既存の「テスト」シートは削除して再作成）
+// 位置はcounterシートの直後に固定する
 function createTestSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var existing = ss.getSheetByName(SHEET_NAMES.TEST);
   if (existing) ss.deleteSheet(existing);
-  var sheet = ss.insertSheet(SHEET_NAMES.TEST, 0);
+
+  var counterSheet = ss.getSheetByName(SHEET_NAMES.COUNTER);
+  var index = counterSheet ? ss.getSheets().indexOf(counterSheet) + 1 : ss.getSheets().length;
+  var sheet = ss.insertSheet(testSheetName, index);
   setupSheet(sheet);
 }
